@@ -15,6 +15,7 @@ class JsonReaderTest extends TestCase
 
         $reader = new JsonReader();
         $reader->open($cars->asFileStream(Cars::TYPE_JSON));
+        $reader->prepare('cars');
 
         foreach ($reader->read('cars') as $key => $row) {
             $this->assertSame($cars->getJsonParts('cars')[$key], $row);
@@ -29,6 +30,7 @@ class JsonReaderTest extends TestCase
 
         $reader = new JsonReader();
         $reader->open($cars->asFileStream(Cars::TYPE_JSON));
+        $reader->prepare();
 
         $this->assertSame($cars->getJson(), $reader->read()->current());
 
@@ -47,6 +49,7 @@ class JsonReaderTest extends TestCase
         $handler->json(json_encode($data));
 
         $reader = new JsonReader($handler);
+        $reader->prepare();
 
         foreach ($reader->read() as $key => $row) {
             $this->assertSame($data[$key], json_decode($row, true));

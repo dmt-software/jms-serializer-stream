@@ -45,19 +45,20 @@ class Serializer
      *
      * @param string $uri The file or stream wrapper to read from.
      * @param string $toObject The class name of object that is returned.
-     * @param string $fromPath The path within the stream or file where the objects are retrieved from.
      * @param string $format The deserialization format.
+     * @param string $fromPath The path within the stream or file where the objects are retrieved from.
      *
      * @return Traversable|{$deserializeObject}[]
      * @throws RuntimeException
      */
-    public function deserialize(string $uri, string $toObject, string $fromPath, string $format): Traversable
+    public function deserialize(string $uri, string $toObject, string $format , string $fromPath = null): Traversable
     {
         $reader = $this->getDeserializationReader($format);
         $reader->open($uri);
+        $reader->prepare($fromPath);
 
         try {
-            foreach ($reader->read($fromPath) as $key => $value) {
+            foreach ($reader->read() as $key => $value) {
                 yield $this->serializer->deserialize($value, $toObject, $format);
             }
         } catch (JmsException $exception) {

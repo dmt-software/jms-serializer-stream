@@ -18,7 +18,7 @@ class SerializerTest extends TestCase
     public function testDeserializeXml()
     {
         $streamSerializer = new Serializer(SerializerBuilder::create()->build());
-        $collection = $streamSerializer->deserialize(__DIR__ . '/Fixtures/cars.xml', Car::class, '/cars/car', 'xml');
+        $collection = $streamSerializer->deserialize(__DIR__ . '/Fixtures/cars.xml', Car::class, 'xml', '/cars/car');
 
         foreach ($collection as $car) {
             $this->assertInstanceOf(Car::class, $car);
@@ -28,7 +28,7 @@ class SerializerTest extends TestCase
     public function testDeserializeJson()
     {
         $streamSerializer = new Serializer(SerializerBuilder::create()->build());
-        $collection = $streamSerializer->deserialize(__DIR__ . '/Fixtures/cars.json', Car::class, 'cars', 'json');
+        $collection = $streamSerializer->deserialize(__DIR__ . '/Fixtures/cars.json', Car::class, 'json', 'cars');
 
         foreach ($collection as $car) {
             $this->assertInstanceOf(Car::class, $car);

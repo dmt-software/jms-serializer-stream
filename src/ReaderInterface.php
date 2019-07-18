@@ -29,12 +29,20 @@ interface ReaderInterface
     public function open(string $streamUriOrFile);
 
     /**
-     * Read the file one piece at a time.
+     * Set the pointer to the objects to read.
      *
      * @param string|null $objectsPath  The path within the stream or file where the objects are retrieved from.
+     *
+     * @return mixed
+     * @throws RuntimeException
+     */
+    public function prepare(string $objectPath = null);
+
+    /**
+     * Read the file one piece at a time.
      *
      * @return Generator
      * @throws RuntimeException
      */
-    public function read(string $objectsPath = null): Generator;
+    public function read(): Generator;
 }

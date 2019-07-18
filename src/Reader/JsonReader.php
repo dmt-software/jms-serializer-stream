@@ -2,6 +2,7 @@
 
 namespace DMT\Serializer\Stream\Reader;
 
+use DMT\Serializer\Stream\Reader\Handler\JsonPreparationHandler;
 use DMT\Serializer\Stream\ReaderInterface;
 use Generator;
 use pcrov\JsonReader\Exception;
@@ -16,16 +17,19 @@ use RuntimeException;
 class JsonReader implements ReaderInterface
 {
     /** @var JsonReaderHandler */
+    protected $reader;
+    /** @var  JsonPreparationHandler */
     protected $handler;
 
     /**
      * JsonReader constructor.
      *
-     * @param JsonReaderHandler $handler
+     * @param JsonReaderHandler $reader
      */
-    public function __construct(JsonReaderHandler $handler = null)
+    public function __construct(JsonReaderHandler $reader = null, JsonPreparationHandler $handler = null)
     {
-        $this->handler = $handler ?? new JsonReaderHandler;
+        $this->reader = $reader ?? new JsonReaderHandler;
+        $this->handler = $handler ?? new JsonPreparationHandler();
     }
 
     /**
@@ -35,7 +39,7 @@ class JsonReader implements ReaderInterface
      */
     public function close(): void
     {
-        $this->handler->close();
+        $this->reader->close();
     }
 
     /**
@@ -48,7 +52,7 @@ class JsonReader implements ReaderInterface
     public function open(string $streamUriOrFile)
     {
         try {
-            $this->handler->open($streamUriOrFile);
+            $this->reader->open($streamUriOrFile);
         } catch (Exception $exception) {
             throw new RuntimeException("Could not read from {$streamUriOrFile}", 0, $exception);
         }
@@ -57,15 +61,13 @@ class JsonReader implements ReaderInterface
     /**
      * Read the file one piece at a time.
      *
-     * @param string|null $objectsPath The path within the stream or file where the objects are retrieved from.
-     *
      * @return Generator
      * @throws RuntimeException
      */
-    public function read(string $objectsPath = null): Generator
+    public function read(): Generator
     {
         try {
-            yield from $this->items($objectsPath);
+            yield from $this->items();
         } catch (Exception $exception) {
             throw new RuntimeException('Error reading json', 0, $exception);
         }
@@ -74,52 +76,29 @@ class JsonReader implements ReaderInterface
     /**
      * Get items from json.
      *
-     * @param string|null $objectsPath
-     *
      * @return Generator
      * @throws Exception
      */
-    protected function items(?string $objectsPath): Generator
+    protected function items(): Generator
     {
-        $depth = $this->prepare($objectsPath);
+        $depth = max($this->reader->depth() - 1, 0);
         $processed = 0;
 
         do {
-            yield $processed++ => json_encode($this->handler->value());
-        } while ($this->handler->next() && $this->handler->depth() > $depth);
+            yield $processed++ => json_encode($this->reader->value());
+        } while ($this->reader->next() && $this->reader->depth() > $depth);
     }
 
     /**
-     * @param string|null $objectsPath
+     * Set the pointer to the object to read.
      *
-     * @return int
+     * @param string|null $objectsPath The path within the stream or file where the objects are retrieved from.
+     *
+     * @return void
      * @throws Exception
      */
-    protected function prepare(?string $objectsPath): int
+    public function prepare(string $objectsPath = null): void
     {
-        if (!$objectsPath) {
-            $this->handler->read();
-
-            if ($this->handler->type() === JsonReaderHandler::ARRAY) {
-                $this->handler->read();
-            };
-
-            return 0;
-        }
-
-        $paths = explode('.', $objectsPath);
-
-        foreach ($paths as $depth => $path) {
-            while ($this->handler->read($path)) {
-                if ($depth + 1 === $this->handler->depth()) {
-                    break;
-                }
-            }
-        }
-
-        $depth = $this->handler->depth();
-        $this->handler->read();
-
-        return $depth;
+        $this->handler->handle($this->reader, $objectsPath);
     }
 }

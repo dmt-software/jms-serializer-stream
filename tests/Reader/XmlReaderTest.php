@@ -14,6 +14,7 @@ class XmlReaderTest extends TestCase
 
         $reader = new XmlReader();
         $reader->open($cars->asFileStream(Cars::TYPE_XML));
+        $reader->prepare('/cars/car');
 
         foreach ($reader->read('/cars/car') as $key => $car) {
             $this->assertEquals($cars->getXmlParts('/cars/car')[$key], $car);
@@ -28,6 +29,7 @@ class XmlReaderTest extends TestCase
 
         $reader = new XmlReader();
         $reader->open($cars->asFileStream(Cars::TYPE_XML));
+        $reader->prepare();
 
         $this->assertSame($cars->getXml(), $reader->read()->current());
 
