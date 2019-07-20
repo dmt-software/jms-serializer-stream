@@ -2,8 +2,6 @@
 
 namespace DMT\Serializer\Stream\Reader;
 
-use DMT\Serializer\Stream\Reader\Handler\XmlPreparationHandler;
-use DMT\Serializer\Stream\ReaderInterface;
 use Generator;
 use RuntimeException;
 use Throwable;
@@ -17,16 +15,26 @@ use XMLReader as XmlReaderHandler;
 class XmlReader implements ReaderInterface
 {
     /** @var XmlReaderHandler */
-    protected $reader;
+    protected $handler;
 
     /**
      * XmlReader constructor.
      *
-     * @param XmlReaderHandler|null $reader
+     * @param XmlReaderHandler $reader
      */
     public function __construct(XmlReaderHandler $reader = null)
     {
-        $this->reader = $reader ?? new XmlReaderHandler;
+        $this->handler = $reader ?? new XmlReaderHandler;
+    }
+
+    /**
+     * Get the internal read handler.
+     *
+     * @return XmlReaderHandler
+     */
+    public function getReadHandler()
+    {
+        return $this->handler;
     }
 
     /**
@@ -36,7 +44,7 @@ class XmlReader implements ReaderInterface
      */
     public function close(): void
     {
-        $this->reader->close();
+        $this->handler->close();
     }
 
     /**
@@ -52,7 +60,7 @@ class XmlReader implements ReaderInterface
         $stream = strpos($streamUriOrFile, '://') ? $streamUriOrFile : "file://$streamUriOrFile";
 
         try {
-            $this->reader->open($stream);
+            $this->handler->open($stream);
         } catch (Throwable $error) {
             throw new RuntimeException("Could not read from {$streamUriOrFile}", 0, $error);
         } finally {
@@ -70,7 +78,7 @@ class XmlReader implements ReaderInterface
      */
     public function prepare(string $objectsPath = null): void
     {
-        (new XmlPreparationHandler($objectsPath))->handle($this->reader);
+        (new Handler\XmlPreparationHandler($objectsPath))->handle($this);
     }
 
     /**
@@ -100,11 +108,11 @@ class XmlReader implements ReaderInterface
         $processed = 0;
 
         do {
-            if (!$xml = $this->reader->readOuterXml()) {
+            if (!$xml = $this->handler->readOuterXml()) {
                 $message = libxml_get_last_error() ? libxml_get_last_error()->message : 'ObjectsPath not found';
                 throw new RuntimeException($message);
             }
             yield $processed++ => $xml;
-        } while ($this->reader->next($this->reader->localName) !== false);
+        } while ($this->handler->next($this->handler->localName) !== false);
     }
 }

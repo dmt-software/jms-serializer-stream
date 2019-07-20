@@ -11,6 +11,10 @@
   ],
   "require": {
     "php": "^7.2",
+    "ext-json": "*",
+    "ext-libxml": "*",
+    "ext-xmlreader": "*",
+    "ext-xmlwriter": "*",
     "jms/serializer": "^1.14",
     "pcrov/jsonreader": "^1.0"
   },

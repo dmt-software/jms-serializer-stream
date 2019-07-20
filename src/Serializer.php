@@ -3,6 +3,7 @@
 namespace DMT\Serializer\Stream;
 
 use DMT\Serializer\Stream\Reader\JsonReader;
+use DMT\Serializer\Stream\Reader\ReaderInterface;
 use DMT\Serializer\Stream\Reader\XmlReader;
 use JMS\Serializer\Exception\Exception as JmsException;
 use JMS\Serializer\Serializer as JmsSerializer;

@@ -2,6 +2,7 @@
 
 namespace DMT\Serializer\Stream\Reader\Handler;
 
+use DMT\Serializer\Stream\Reader\ReaderInterface;
 use pcrov\JsonReader\Exception;
 use pcrov\JsonReader\JsonReader as JsonReaderHandler;
 use RuntimeException;
@@ -32,16 +33,16 @@ class JsonPreparationHandler implements ReaderHandlerInterface
     /**
      * Prepare the json stream/file.
      *
-     * @param JsonReaderHandler $reader The internal json reader.
+     * @param ReaderInterface $reader The internal json reader.
      * @throws RuntimeException
      */
-    public function handle($reader): void
+    public function handle(ReaderInterface $reader): void
     {
         try {
             if ($this->objectsPath) {
-                $this->handleObjectsPath($reader);
+                $this->handleObjectsPath($reader->getReadHandler());
             } else {
-                $this->handleEmptyObjectsPath($reader);
+                $this->handleEmptyObjectsPath($reader->getReadHandler());
             }
         } catch (TypeError $error) {
             throw new RuntimeException('Incompatible reader for this handler');

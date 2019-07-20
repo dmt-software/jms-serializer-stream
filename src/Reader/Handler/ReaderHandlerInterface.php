@@ -2,6 +2,7 @@
 
 namespace DMT\Serializer\Stream\Reader\Handler;
 
+use DMT\Serializer\Stream\Reader\ReaderInterface;
 use RuntimeException;
 
 interface ReaderHandlerInterface
@@ -9,10 +10,10 @@ interface ReaderHandlerInterface
     /**
      * Handle the file/stream.
      *
-     * @param mixed $reader The internal reader for ReaderInterface.
+     * @param ReaderInterface $reader
      *
      * @return void
      * @throws RuntimeException
      */
-    public function handle($reader): void;
+    public function handle(ReaderInterface $reader): void;
 }

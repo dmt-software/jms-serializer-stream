@@ -2,6 +2,7 @@
 
 namespace DMT\Serializer\Stream\Reader\Handler;
 
+use DMT\Serializer\Stream\Reader\ReaderInterface;
 use RuntimeException;
 use Throwable;
 use TypeError;
@@ -27,20 +28,20 @@ class XmlPreparationHandler implements ReaderHandlerInterface
     /**
      * Handle the file/stream.
      *
-     * @param mixed $reader The internal reader for ReaderInterface.
+     * @param ReaderInterface $reader The internal reader for ReaderInterface.
      *
      * @return void
      * @throws RuntimeException
      */
-    public function handle($reader): void
+    public function handle(ReaderInterface $reader): void
     {
         try {
             $reader->read();
 
             if (!$this->objectsPath) {
-                $this->handleEmptyObjectsPath($reader);
+                $this->handleEmptyObjectsPath($reader->getReadHandler());
             } else {
-                $this->handleObjectsPath($reader);
+                $this->handleObjectsPath($reader->getReadHandler());
             }
         } catch (TypeError $error) {
             throw new RuntimeException('Incompatible reader for this handler');

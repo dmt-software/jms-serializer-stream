@@ -1,6 +1,6 @@
 <?php
 
-namespace DMT\Serializer\Stream;
+namespace DMT\Serializer\Stream\Reader;
 
 use Generator;
 use RuntimeException;
@@ -18,6 +18,13 @@ interface ReaderInterface
      * @return void
      */
     public function close(): void;
+
+    /**
+     * Get the internal read handler.
+     *
+     * @return mixed
+     */
+    public function getReadHandler();
 
     /**
      * Open a stream (wrapper) or file.

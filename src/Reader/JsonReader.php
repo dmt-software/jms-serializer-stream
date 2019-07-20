@@ -2,8 +2,6 @@
 
 namespace DMT\Serializer\Stream\Reader;
 
-use DMT\Serializer\Stream\Reader\Handler\JsonPreparationHandler;
-use DMT\Serializer\Stream\ReaderInterface;
 use Generator;
 use pcrov\JsonReader\Exception;
 use pcrov\JsonReader\JsonReader as JsonReaderHandler;
@@ -17,7 +15,7 @@ use RuntimeException;
 class JsonReader implements ReaderInterface
 {
     /** @var JsonReaderHandler */
-    protected $reader;
+    protected $handler;
 
     /**
      * JsonReader constructor.
@@ -26,7 +24,17 @@ class JsonReader implements ReaderInterface
      */
     public function __construct(JsonReaderHandler $reader = null)
     {
-        $this->reader = $reader ?? new JsonReaderHandler;
+        $this->handler = $reader ?? new JsonReaderHandler;
+    }
+
+    /**
+     * Get the internal read handler
+     *
+     * @return JsonReaderHandler
+     */
+    public function getReadHandler()
+    {
+        return $this->handler;
     }
 
     /**
@@ -36,7 +44,7 @@ class JsonReader implements ReaderInterface
      */
     public function close(): void
     {
-        $this->reader->close();
+        $this->handler->close();
     }
 
     /**
@@ -49,7 +57,7 @@ class JsonReader implements ReaderInterface
     public function open(string $streamUriOrFile)
     {
         try {
-            $this->reader->open($streamUriOrFile);
+            $this->handler->open($streamUriOrFile);
         } catch (Exception $exception) {
             throw new RuntimeException("Could not read from {$streamUriOrFile}", 0, $exception);
         }
@@ -78,12 +86,12 @@ class JsonReader implements ReaderInterface
      */
     protected function items(): Generator
     {
-        $depth = max($this->reader->depth() - 1, 0);
+        $depth = max($this->handler->depth() - 1, 0);
         $processed = 0;
 
         do {
-            yield $processed++ => json_encode($this->reader->value());
-        } while ($this->reader->next() && $this->reader->depth() > $depth);
+            yield $processed++ => json_encode($this->handler->value());
+        } while ($this->handler->next() && $this->handler->depth() > $depth);
     }
 
     /**
@@ -96,6 +104,6 @@ class JsonReader implements ReaderInterface
      */
     public function prepare(string $objectsPath = null): void
     {
-        (new JsonPreparationHandler($objectsPath))->handle($this->reader);
+        (new Handler\JsonPreparationHandler($objectsPath))->handle($this);
     }
 }
