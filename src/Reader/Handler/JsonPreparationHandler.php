@@ -15,16 +15,31 @@ use TypeError;
 class JsonPreparationHandler implements ReaderHandlerInterface
 {
     /**
+     * @var string|null
+     */
+    protected $objectsPath;
+
+    /**
+     * JsonPreparationHandler constructor.
+     *
+     * @param string|null $objectsPath The path where the reader should point to.
+     */
+    public function __construct(string $objectsPath = null)
+    {
+        $this->objectsPath = $objectsPath;
+    }
+
+    /**
      * Prepare the json stream/file.
      *
      * @param JsonReaderHandler $reader The internal json reader.
-     * @param string|null $objectsPath The path where the reader should point to.
+     * @throws RuntimeException
      */
-    public function handle($reader, string $objectsPath = null): void
+    public function handle($reader): void
     {
         try {
-            if ($objectsPath) {
-                $this->handleObjectsPath($reader, $objectsPath);
+            if ($this->objectsPath) {
+                $this->handleObjectsPath($reader);
             } else {
                 $this->handleEmptyObjectsPath($reader);
             }
@@ -39,14 +54,13 @@ class JsonPreparationHandler implements ReaderHandlerInterface
      * Set the pointer (from current position) to the given path.
      *
      * @param JsonReaderHandler $reader The file handle reader.
-     * @param string $objectsPath The path where the objects are located.
      *
      * @return void
      * @throws Exception
      */
-    protected function handleObjectsPath(JsonReaderHandler $reader, string $objectsPath): void
+    protected function handleObjectsPath(JsonReaderHandler $reader): void
     {
-        $paths = explode('.', $objectsPath);
+        $paths = explode('.', $this->objectsPath);
 
         foreach ($paths as $depth => $path) {
             while ($reader->read($path)) {

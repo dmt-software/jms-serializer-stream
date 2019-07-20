@@ -18,18 +18,15 @@ class XmlReader implements ReaderInterface
 {
     /** @var XmlReaderHandler */
     protected $reader;
-    /** @var XmlPreparationHandler */
-    protected $handler;
 
     /**
      * XmlReader constructor.
      *
      * @param XmlReaderHandler|null $reader
      */
-    public function __construct(XmlReaderHandler $reader = null, XmlPreparationHandler $handler = null)
+    public function __construct(XmlReaderHandler $reader = null)
     {
         $this->reader = $reader ?? new XmlReaderHandler;
-        $this->handler = $handler ?? new XmlPreparationHandler();
     }
 
     /**
@@ -67,11 +64,13 @@ class XmlReader implements ReaderInterface
      * Set pointer to the element defined by objectsPath
      *
      * @param string|null $objectsPath A full (x)path of the element to iterate from.
+     *
      * @return void
+     * @throws RuntimeException
      */
     public function prepare(string $objectsPath = null): void
     {
-        $this->handler->handle($this->reader, $objectsPath);
+        (new XmlPreparationHandler($objectsPath))->handle($this->reader);
     }
 
     /**

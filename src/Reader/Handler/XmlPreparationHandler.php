@@ -2,7 +2,6 @@
 
 namespace DMT\Serializer\Stream\Reader\Handler;
 
-use function PHPSTORM_META\elementType;
 use RuntimeException;
 use Throwable;
 use TypeError;
@@ -11,22 +10,37 @@ use XMLReader as XmlReaderHandler;
 class XmlPreparationHandler implements ReaderHandlerInterface
 {
     /**
+     * @var string|null
+     */
+    protected $objectsPath;
+
+    /**
+     * XmlPreparationHandler constructor.
+     *
+     * @param string|null $objectsPath The path of the objects where the reader should point to.
+     */
+    public function __construct(string $objectsPath = null)
+    {
+        $this->objectsPath = $objectsPath;
+    }
+
+    /**
      * Handle the file/stream.
      *
      * @param mixed $reader The internal reader for ReaderInterface.
-     * @param string|null $objectsPath The path of the objects where the reader should point to.
      *
      * @return void
      * @throws RuntimeException
      */
-    public function handle($reader, string $objectsPath = null): void
+    public function handle($reader): void
     {
         try {
+            $reader->read();
 
-            if (!$objectsPath) {
+            if (!$this->objectsPath) {
                 $this->handleEmptyObjectsPath($reader);
             } else {
-                $this->handleObjectsPath($reader, $objectsPath);
+                $this->handleObjectsPath($reader);
             }
         } catch (TypeError $error) {
             throw new RuntimeException('Incompatible reader for this handler');
@@ -39,13 +53,10 @@ class XmlPreparationHandler implements ReaderHandlerInterface
      * Set the pointer to the objects path.
      *
      * @param XmlReaderHandler $reader The internal reader.
-     * @param string $objectsPath The path where the objects are located.
      */
-    protected function handleObjectsPath(XmlReaderHandler $reader, string $objectsPath)
+    protected function handleObjectsPath(XmlReaderHandler $reader)
     {
-        $reader->read();
-
-        $paths = preg_split('~/~', $objectsPath, -1, PREG_SPLIT_NO_EMPTY);
+        $paths = preg_split('~/~', $this->objectsPath, -1, PREG_SPLIT_NO_EMPTY);
         $stack = [];
 
         do {
@@ -69,8 +80,6 @@ class XmlPreparationHandler implements ReaderHandlerInterface
      */
     protected function handleEmptyObjectsPath(XmlReaderHandler $reader): void
     {
-        $reader->read();
-
         while ($reader->nodeType !== XmlReaderHandler::ELEMENT) {
             $reader->read();
 

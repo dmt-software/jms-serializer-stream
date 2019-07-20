@@ -10,10 +10,9 @@ interface ReaderHandlerInterface
      * Handle the file/stream.
      *
      * @param mixed $reader The internal reader for ReaderInterface.
-     * @param string|null $objectsPath The path of the objects where the reader should point to.
      *
      * @return void
      * @throws RuntimeException
      */
-    public function handle($reader, string $objectsPath = null): void;
+    public function handle($reader): void;
 }

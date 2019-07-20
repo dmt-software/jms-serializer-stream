@@ -18,18 +18,15 @@ class JsonReader implements ReaderInterface
 {
     /** @var JsonReaderHandler */
     protected $reader;
-    /** @var  JsonPreparationHandler */
-    protected $handler;
 
     /**
      * JsonReader constructor.
      *
      * @param JsonReaderHandler $reader
      */
-    public function __construct(JsonReaderHandler $reader = null, JsonPreparationHandler $handler = null)
+    public function __construct(JsonReaderHandler $reader = null)
     {
         $this->reader = $reader ?? new JsonReaderHandler;
-        $this->handler = $handler ?? new JsonPreparationHandler();
     }
 
     /**
@@ -95,10 +92,10 @@ class JsonReader implements ReaderInterface
      * @param string|null $objectsPath The path within the stream or file where the objects are retrieved from.
      *
      * @return void
-     * @throws Exception
+     * @throws RuntimeException
      */
     public function prepare(string $objectsPath = null): void
     {
-        $this->handler->handle($this->reader, $objectsPath);
+        (new JsonPreparationHandler($objectsPath))->handle($this->reader);
     }
 }
