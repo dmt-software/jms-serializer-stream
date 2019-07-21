@@ -2,6 +2,7 @@
 
 namespace DMT\Serializer\Stream\Reader;
 
+use DMT\Serializer\Stream\Handler\Json\PrepareReader;
 use Generator;
 use pcrov\JsonReader\Exception;
 use pcrov\JsonReader\JsonReader as JsonReaderHandler;
@@ -104,6 +105,6 @@ class JsonReader implements ReaderInterface
      */
     public function prepare(string $objectsPath = null): void
     {
-        (new Handler\JsonPreparationHandler($objectsPath))->handle($this);
+        (new PrepareReader($objectsPath))->handle($this);
     }
 }

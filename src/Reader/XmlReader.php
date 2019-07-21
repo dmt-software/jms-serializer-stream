@@ -2,6 +2,7 @@
 
 namespace DMT\Serializer\Stream\Reader;
 
+use DMT\Serializer\Stream\Handler\Xml\PrepareReader;
 use Generator;
 use RuntimeException;
 use Throwable;
@@ -20,11 +21,11 @@ class XmlReader implements ReaderInterface
     /**
      * XmlReader constructor.
      *
-     * @param XmlReaderHandler $reader
+     * @param XmlReaderHandler $handler
      */
-    public function __construct(XmlReaderHandler $reader = null)
+    public function __construct(XmlReaderHandler $handler = null)
     {
-        $this->handler = $reader ?? new XmlReaderHandler;
+        $this->handler = $handler ?? new XmlReaderHandler;
     }
 
     /**
@@ -78,7 +79,7 @@ class XmlReader implements ReaderInterface
      */
     public function prepare(string $objectsPath = null): void
     {
-        (new Handler\XmlPreparationHandler($objectsPath))->handle($this);
+        (new PrepareReader($objectsPath))->handle($this);
     }
 
     /**

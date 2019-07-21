@@ -5,6 +5,7 @@ namespace DMT\Serializer\Stream;
 use DMT\Serializer\Stream\Reader\JsonReader;
 use DMT\Serializer\Stream\Reader\ReaderInterface;
 use DMT\Serializer\Stream\Reader\XmlReader;
+use DMT\Serializer\Stream\Writer\JsonWriter;
 use JMS\Serializer\Exception\Exception as JmsException;
 use JMS\Serializer\Serializer as JmsSerializer;
 use RuntimeException;
@@ -30,15 +31,36 @@ class Serializer
      * Serializer constructor.
      *
      * @param JmsSerializer $serializer
-     * @param array $deserializeReaders
      */
-    public function __construct(JmsSerializer $serializer, array $deserializeReaders = null)
+    public function __construct(JmsSerializer $serializer)
     {
         $this->serializer = $serializer;
+    }
 
-        if ($deserializeReaders) {
-            $this->deserializationReaders = $deserializeReaders;
+    /**
+     * @param string $uri
+     * @param Traversable $objects
+     * @param string $format
+     * @param string|null $toPath
+     * @param string|null $container
+     */
+    public function serialize(string $uri, Traversable $objects, string $format, string $toPath = null, string $container = null): void
+    {
+        $writer = $this->getSerializeWriter($format);
+        $writer->open($uri);
+        $writer->prepare($toPath, $container);
+
+        try {
+            $writer->write(call_user_func(function () use ($objects, $format) {
+                    foreach ($objects as $object) {
+                        yield $this->serializer->serialize($object, $format);
+                    }
+                })
+            );
+        } finally {
+            $writer->close();
         }
+
     }
 
     /**
@@ -52,7 +74,7 @@ class Serializer
      * @return Traversable|{$deserializeObject}[]
      * @throws RuntimeException
      */
-    public function deserialize(string $uri, string $toObject, string $format , string $fromPath = null): Traversable
+    public function deserialize(string $uri, string $toObject, string $format, string $fromPath = null): Traversable
     {
         $reader = $this->getDeserializationReader($format);
         $reader->open($uri);
@@ -92,5 +114,10 @@ class Serializer
         }
 
         return clone($this->deserializationReaders[$format]);
+    }
+
+    protected function getSerializeWriter(string $format)
+    {
+        return new JsonWriter();
     }
 }

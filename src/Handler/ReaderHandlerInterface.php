@@ -1,6 +1,6 @@
 <?php
 
-namespace DMT\Serializer\Stream\Reader\Handler;
+namespace DMT\Serializer\Stream\Handler;
 
 use DMT\Serializer\Stream\Reader\ReaderInterface;
 use RuntimeException;

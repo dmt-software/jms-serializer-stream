@@ -1,14 +1,20 @@
 <?php
 
-namespace DMT\Serializer\Stream\Reader\Handler;
+namespace DMT\Serializer\Stream\Handler\Xml;
 
+use DMT\Serializer\Stream\Handler\ReaderHandlerInterface;
 use DMT\Serializer\Stream\Reader\ReaderInterface;
 use RuntimeException;
 use Throwable;
 use TypeError;
 use XMLReader as XmlReaderHandler;
 
-class XmlPreparationHandler implements ReaderHandlerInterface
+/**
+ * Class PrepareReader
+ *
+ * @package DMT\Serializer\Stream
+ */
+class PrepareReader implements ReaderHandlerInterface
 {
     /**
      * @var string|null

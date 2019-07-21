@@ -1,7 +1,8 @@
 <?php
 
-namespace DMT\Serializer\Stream\Reader\Handler;
+namespace DMT\Serializer\Stream\Handler\Json;
 
+use DMT\Serializer\Stream\Handler\ReaderHandlerInterface;
 use DMT\Serializer\Stream\Reader\ReaderInterface;
 use pcrov\JsonReader\Exception;
 use pcrov\JsonReader\JsonReader as JsonReaderHandler;
@@ -9,11 +10,11 @@ use RuntimeException;
 use TypeError;
 
 /**
- * Class JsonPreparationHandler
+ * Class JsonPreparation
  *
  * @package DMT\Serializer\Stream
  */
-class JsonPreparationHandler implements ReaderHandlerInterface
+class PrepareReader implements ReaderHandlerInterface
 {
     /**
      * @var string|null
@@ -21,7 +22,7 @@ class JsonPreparationHandler implements ReaderHandlerInterface
     protected $objectsPath;
 
     /**
-     * JsonPreparationHandler constructor.
+     * JsonPreparation constructor.
      *
      * @param string|null $objectsPath The path where the reader should point to.
      */
