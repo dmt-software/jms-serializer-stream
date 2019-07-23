@@ -2,7 +2,9 @@
 
 namespace DMT\Test\Serializer\Stream\Fixtures;
 
+use ArrayIterator;
 use SimpleXMLElement;
+use Traversable;
 
 /**
  * Class Cars
@@ -13,6 +15,32 @@ class Cars
 {
     public const TYPE_JSON = 'json';
     public const TYPE_XML = 'xml';
+
+    /** @var array */
+    protected $cars = [
+        [
+            'name' => 'Ford',
+            'models' => ['Fiesta', 'Focus', 'Mustang'],
+        ],
+        [
+            'name' => 'BMW',
+            'models' => ['320', 'X3', 'X5']
+        ],
+        [
+            'name' => 'Fiat',
+            'models' => ['500', 'Panda']
+        ]
+    ];
+
+    /**
+     * Get a list of car json strings.
+     *
+     * @return Traversable
+     */
+    public function getCarsAsJson(): Traversable
+    {
+        return new ArrayIterator(array_map('json_encode', $this->cars));
+    }
 
     /**
      * Get the cars xml.

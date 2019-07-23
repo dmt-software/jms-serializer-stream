@@ -16,10 +16,10 @@ interface WriterHandlerInterface
      * Handle the write stream.
      *
      * @param WriterInterface $writer
-     * @param callable $next
+     * @param callable $writeCallback
      *
      * @return void
      * @throws RuntimeException
      */
-    public function handle(WriterInterface $writer, callable $next): void;
+    public function handle(WriterInterface $writer, callable $writeCallback): void;
 }

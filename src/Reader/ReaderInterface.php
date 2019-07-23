@@ -31,9 +31,10 @@ interface ReaderInterface
      *
      * @param string $streamUriOrFile
      *
+     * @return void
      * @throws RuntimeException
      */
-    public function open(string $streamUriOrFile);
+    public function open(string $streamUriOrFile): void;
 
     /**
      * Set the pointer to the objects to read.
@@ -43,7 +44,7 @@ interface ReaderInterface
      * @return mixed
      * @throws RuntimeException
      */
-    public function prepare(string $objectPath = null);
+    public function prepare(string $objectsPath = null);
 
     /**
      * Read the file one piece at a time.

@@ -53,9 +53,10 @@ class XmlReader implements ReaderInterface
      *
      * @param string $streamUriOrFile
      *
+     * @return void
      * @throws RuntimeException
      */
-    public function open(string $streamUriOrFile)
+    public function open(string $streamUriOrFile): void
     {
         $previous = libxml_disable_entity_loader(false);
         $stream = strpos($streamUriOrFile, '://') ? $streamUriOrFile : "file://$streamUriOrFile";

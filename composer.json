@@ -24,6 +24,7 @@
     }
   },
   "require-dev": {
+    "ext-simplexml": "*",
     "phpunit/phpunit": "^7.5",
     "doctrine/annotations": "^1.6"
   },

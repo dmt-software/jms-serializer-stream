@@ -53,9 +53,10 @@ class JsonReader implements ReaderInterface
      *
      * @param string $streamUriOrFile
      *
+     * @return void
      * @throws RuntimeException
      */
-    public function open(string $streamUriOrFile)
+    public function open(string $streamUriOrFile): void
     {
         try {
             $this->handler->open($streamUriOrFile);

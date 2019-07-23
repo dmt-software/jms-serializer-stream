@@ -60,8 +60,10 @@ class PrepareReader implements ReaderHandlerInterface
      * Set the pointer to the objects path.
      *
      * @param XmlReaderHandler $reader The internal reader.
+     *
+     * @return void
      */
-    protected function handleObjectsPath(XmlReaderHandler $reader)
+    protected function handleObjectsPath(XmlReaderHandler $reader): void
     {
         $paths = preg_split('~/~', $this->objectsPath, -1, PREG_SPLIT_NO_EMPTY);
         $stack = [];
@@ -83,6 +85,8 @@ class PrepareReader implements ReaderHandlerInterface
      * Set pointer to first xml element.
      *
      * @param XmlReaderHandler $reader The internal reader.
+     *
+     * @return void
      * @throws RuntimeException
      */
     protected function handleEmptyObjectsPath(XmlReaderHandler $reader): void

@@ -31,14 +31,15 @@ class PrepareWriter implements WriterHandlerInterface
     }
 
     /**
-     * Handle the wrtie stream.
+     * Handle the write stream.
      *
      * @param WriterInterface $writer
+     * @param callable $writeCallback
      *
      * @return void
      * @throws RuntimeException
      */
-    public function handle(WriterInterface $writer, callable $next): void
+    public function handle(WriterInterface $writer, callable $writeCallback): void
     {
         $paths = explode('.', $this->objectsPath);
         $lastPath = end($paths);
@@ -62,7 +63,7 @@ class PrepareWriter implements WriterHandlerInterface
 
         $writer->getWriteHandler()->fwrite($match[1]);
 
-        call_user_func($next);
+        call_user_func($writeCallback);
 
         $writer->getWriteHandler()->fwrite($match[2]);
     }

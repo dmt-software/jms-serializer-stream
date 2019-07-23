@@ -43,6 +43,8 @@ class Serializer
      * @param string $format
      * @param string|null $toPath
      * @param string|null $container
+     *
+     * @return void
      */
     public function serialize(string $uri, Traversable $objects, string $format, string $toPath = null, string $container = null): void
     {
@@ -51,12 +53,15 @@ class Serializer
         $writer->prepare($toPath, $container);
 
         try {
-            $writer->write(call_user_func(function () use ($objects, $format) {
+            $writer->write(
+                call_user_func(function () use ($objects, $format) {
                     foreach ($objects as $object) {
                         yield $this->serializer->serialize($object, $format);
                     }
                 })
             );
+        } catch (JmsException $exception) {
+            throw new RuntimeException("Error serialize objects", 0, $exception->getMessage());
         } finally {
             $writer->close();
         }

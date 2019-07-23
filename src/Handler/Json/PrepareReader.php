@@ -35,6 +35,8 @@ class PrepareReader implements ReaderHandlerInterface
      * Prepare the json stream/file.
      *
      * @param ReaderInterface $reader The internal json reader.
+     *
+     * @return void
      * @throws RuntimeException
      */
     public function handle(ReaderInterface $reader): void
@@ -79,6 +81,8 @@ class PrepareReader implements ReaderHandlerInterface
      * Set the pointer (from current position) to the first eligible object.
      *
      * @param JsonReaderHandler $reader
+     *
+     * @return void
      * @throws Exception
      */
     protected function handleEmptyObjectsPath(JsonReaderHandler $reader): void
